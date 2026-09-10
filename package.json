@@ -1,0 +1,14 @@
+{
+  "name": "4yourskin-prototype",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "demo": "tsx lib/recommendation-demo.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
