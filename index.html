@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4YOURSKIN — din hudanalys</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,480;0,9..144,600;1,9..144,420&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#20241d;
+  --paper:#ffffff;
+  --paper-alt:#f5f4ef;
+  --moss:#5c6b47;
+  --moss-dark:#3c452e;
+  --clay:#20241d;
+  --line:#dcdcd4;
+  --white:#fffdf8;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:40px 24px 90px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---- header / brand ---- */
+.brand{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  padding-bottom:16px;
+  margin-bottom:20px;
+}
+.brand-mark{
+  font-family:'Archivo',sans-serif;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-0.01em;
+  text-transform:uppercase;
+  background:none;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  color:var(--ink);
+}
+.brand-mark span{ color:var(--moss-dark); }
+.brand-right{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.brand-tag{
+  font-size:12.5px;
+  color:var(--ink);
+  opacity:0.55;
+}
+.login-link{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:var(--ink);
+  opacity:0.65;
+  padding:0;
+}
+.login-link:hover{ opacity:1; }
+.bag-btn{
+  position:relative;
+  background:none;
+  border:none;
+  padding:4px;
+  cursor:pointer;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  line-height:0;
+}
+.bag-btn svg{ width:22px; height:22px; }
+.bag-count{
+  position:absolute;
+  top:-6px;
+  right:-6px;
+  min-width:16px;
+  height:16px;
+  padding:0 3px;
+  border-radius:50%;
+  background:var(--moss);
+  color:var(--white);
+  font-family:'Inter',sans-serif;
+  font-size:10px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  transform:scale(0.6);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.bag-count.show{ opacity:1; transform:scale(1); }
+.bag-count.bump{ animation:bagBump .35s ease; }
+@keyframes bagBump{ 0%{transform:scale(1);} 40%{transform:scale(1.35);} 100%{transform:scale(1);} }
+
+/* ---- main nav ---- */
+.main-nav{
+  display:flex;
+  gap:26px;
+  margin-bottom:38px;
+}
+.nav-link{
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  color:var(--ink);
+  opacity:0.55;
+  cursor:pointer;
+  background:none;
+  border:none;
+  padding:0 0 5px;
+  border-bottom:2px solid transparent;
+}
+.nav-link:hover{ opacity:0.85; }
+.nav-link.active{ opacity:1; border-bottom-color:var(--moss); }
+
+/* ---- page views ---- */
+.page-view{ display:none; }
+.page-view.active{ display:block; animation:rise .45s ease; }
+@keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+/* ---- progress ---- */
+.progress{
+  display:flex;
+  gap:6px;
+  margin-bottom:40px;
+}
+.progress i{
+  flex:1;
+  height:2px;
+  background:var(--line);
+  border-radius:2px;
+  overflow:hidden;
+  position:relative;
+}
+.progress i b{
+  display:block;
+  height:100%;
+  width:0%;
+  background:var(--moss);
+  transition:width .5s ease;
+}
+
+/* ---- quiz card ---- */
+#quiz{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+.step{ display:none; animation:rise .45s ease; }
+.step.active{ display:block; }
+
+.step-no{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-weight:420;
+  color:var(--clay);
+  font-size:16px;
+  margin-bottom:10px;
+}
+.step h2{
+  font-family:'Fraunces',serif;
+  font-weight:480;
+  font-size:clamp(26px,4vw,36px);
+  line-height:1.25;
+  margin:0 0 8px;
+  max-width:16ch;
+}
+.step .hint{
+  font-size:14px;
+  color:var(--ink);
+  opacity:0.6;
+  margin-bottom:30px;
+}
+
+.options{
+  display:flex;
+  flex-direction:column;
+  border-top:1px solid var(--line);
+}
+.opt{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:19px 2px;
+  border-bottom:1px solid var(--line);
+  background:none;
+  border-left:none; border-right:none; border-top:none;
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  color:var(--ink);
+  cursor:pointer;
+  text-align:left;
+  width:100%;
+  transition:color .2s ease;
+}
+.opt:hover{ color:var(--moss-dark); }
+.opt .num{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:14px;
+  color:var(--clay);
+  opacity:0.8;
+  min-width:22px;
+}
+.opt .label{ flex:1; }
+.opt .mark{
+  width:9px;height:9px;border-radius:50%;
+  border:1.4px solid var(--line);
+  flex-shrink:0;
+}
+.opt.selected{ color:var(--moss-dark); font-weight:500; }
+.opt.selected .mark{ background:var(--moss); border-color:var(--moss); }
+
+.multihint{
+  font-size:12.5px;
+  color:var(--clay);
+  margin-top:16px;
+  font-style:italic;
+  font-family:'Fraunces',serif;
+}
+
+.nav-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:34px;
+}
+.btn{
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  border:none;
+  background:none;
+  padding:0;
+}
+.btn-back{ color:var(--ink); opacity:0.5; }
+.btn-back:hover{ opacity:0.85; }
+.btn-back:disabled{ visibility:hidden; }
+.btn-next{
+  background:var(--ink);
+  color:var(--white);
+  padding:13px 26px;
+  border-radius:2px;
+  letter-spacing:0.01em;
+}
+.btn-next:disabled{ background:var(--line); color:#9a927c; cursor:not-allowed; }
+.btn-next:not(:disabled):hover{ background:var(--moss-dark); }
+
+/* ---- shared page head ---- */
+.res-head{ margin-bottom:38px; }
+.res-eyebrow{
+  font-family:'Fraunces',serif; font-style:italic; color:var(--clay); font-size:16px; margin-bottom:8px;
+}
+.res-head h2{
+  font-family:'Fraunces',serif; font-weight:480; font-size:clamp(28px,4.5vw,40px);
+  line-height:1.2; margin:0 0 14px; max-width:22ch;
+}
+.res-head p{ font-size:15.5px; line-height:1.65; opacity:0.75; max-width:56ch; margin:0 0 12px; }
+
+/* ---- results / shop rows (shared row layout) ---- */
+.routine, .bag-list{
+  border-top:1px solid var(--line);
+}
+.product, .bag-item{
+  display:grid;
+  grid-template-columns:84px 1fr;
+  gap:22px;
+  padding:26px 0;
+  border-bottom:1px solid var(--line);
+}
+.prod-art{
+  width:84px; height:84px;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--paper-alt);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--moss-dark);
+  flex-shrink:0;
+}
+.prod-art svg{ width:32px; height:32px; }
+.product .step-label{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:13.5px;
+  color:var(--moss);
+  padding-top:3px;
+}
+.product h3, .bag-item h3, .shop-item h3{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:19px;
+  margin:0 0 6px;
+}
+.product h3 .prod-name, .bag-item h3 .prod-name, .shop-item h3 .prod-name{
+  font-weight:420;
+  font-style:italic;
+  opacity:0.85;
+}
+.product .why, .bag-item .why, .shop-item .why{
+  font-size:14px;
+  line-height:1.55;
+  opacity:0.75;
+  margin:0 0 8px;
+}
+.product .tags, .shop-item .tags{
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+.product .tags span, .shop-item .tags span{
+  font-size:11px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:3px 10px;
+  color:var(--moss-dark);
+  opacity:0.85;
+}
+.product .price, .bag-item .price, .shop-item .price{
+  font-size:13px;
+  color:var(--ink);
+  opacity:0.55;
+}
+.product-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:12px;
+}
+.btn-add{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  color:var(--moss-dark);
+  background:none;
+  border:1px solid var(--moss);
+  border-radius:2px;
+  padding:9px 16px;
+  cursor:pointer;
+  transition:background .2s ease, color .2s ease;
+  white-space:nowrap;
+}
+.btn-add:hover{ background:var(--moss); color:var(--white); }
+.btn-add.added{ background:var(--moss); color:var(--white); border-color:var(--moss); }
+
+.res-actions{
+  display:flex;
+  gap:22px;
+  align-items:center;
+  margin-top:40px;
+}
+.btn-cta{
+  background:var(--moss);
+  color:var(--white);
+  padding:14px 30px;
+  border-radius:2px;
+  font-size:14.5px;
+  font-weight:500;
+}
+.btn-cta:hover{ background:var(--moss-dark); }
+.btn-restart{
+  font-size:13px;
+  opacity:0.55;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.btn-restart:hover{ opacity:0.9; }
+
+/* ---- shop ---- */
+.shop-section h3{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:20px;
+  margin:34px 0 0;
+  padding-top:0;
+}
+.shop-list{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:32px 22px;
+  margin-top:22px;
+}
+.shop-item{
+  display:flex;
+  flex-direction:column;
+  padding:0;
+  border-bottom:none;
+}
+.shop-item > div{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.shop-item .prod-art{
+  width:100%;
+  height:150px;
+  margin-bottom:14px;
+}
+.shop-item .prod-art svg{ width:40px; height:40px; }
+.shop-item h3{ font-size:15.5px; margin:0 0 4px; }
+.shop-item .price{ margin:0 0 6px; font-weight:500; opacity:0.8; }
+.shop-item .why{ margin:0 0 10px; }
+.shop-item .tags{ margin-bottom:12px; }
+.shop-item .btn-add{ width:100%; text-align:center; margin-top:auto; }
+
+@media (max-width:680px){
+  .shop-list{ grid-template-columns:repeat(2, 1fr); }
+}
+@media (max-width:460px){
+  .shop-list{ grid-template-columns:1fr; }
+  .shop-item .prod-art{ height:180px; }
+}
+
+/* ---- bag ---- */
+.bag-empty{ padding:30px 0 10px; opacity:0.6; font-size:15px; }
+.bag-item .qty{ font-size:12.5px; opacity:0.6; margin-top:2px; }
+.bag-remove{
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  opacity:0.55;
+  cursor:pointer;
+  background:none;
+  border:none;
+  padding:0;
+  margin-top:10px;
+}
+.bag-remove:hover{ opacity:0.9; }
+.bag-total{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:24px 0;
+  font-family:'Fraunces',serif;
+  font-size:19px;
+  font-weight:600;
+}
+
+/* ---- home: marquee + banner ---- */
+.review-marquee{
+  overflow:hidden;
+  width:100%;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:28px 0;
+  mask-image:linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image:linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.marquee-track{
+  display:flex;
+  gap:20px;
+  width:max-content;
+  animation:marquee 32s linear infinite;
+}
+.marquee-track:hover{ animation-play-state:paused; }
+@keyframes marquee{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+.review-card{
+  flex-shrink:0;
+  width:280px;
+  background:var(--paper-alt);
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:22px;
+}
+.review-card .stars{
+  color:var(--moss);
+  font-size:13px;
+  letter-spacing:2px;
+  display:block;
+  margin-bottom:10px;
+}
+.review-card p{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:14.5px;
+  line-height:1.55;
+  margin:0 0 12px;
+}
+.review-card span.name{ font-size:12px; opacity:0.55; }
+
+.home-banner{
+  margin-top:70px;
+  padding:50px 0 20px;
+  text-align:center;
+}
+.banner-lead{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:17px;
+  opacity:0.65;
+  margin:0 0 6px;
+}
+.banner-link{
+  font-family:'Archivo',sans-serif;
+  font-size:clamp(34px,7vw,56px);
+  font-weight:800;
+  letter-spacing:-0.01em;
+  text-transform:uppercase;
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:var(--ink);
+  padding:0;
+  transition:color .2s ease;
+}
+.banner-link span{ color:var(--moss-dark); }
+.banner-link:hover{ color:var(--moss-dark); }
+.banner-link:hover span{ color:var(--ink); }
+
+/* ---- login ---- */
+.login-form{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  max-width:380px;
+  margin-top:6px;
+}
+.login-form label{
+  display:flex; flex-direction:column; gap:6px;
+  font-size:13px; color:var(--ink); opacity:0.7;
+}
+.login-form input{
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:var(--paper-alt);
+  color:var(--ink);
+}
+.login-form input:focus{ outline:none; border-color:var(--moss); }
+.points-note{ font-size:13px; line-height:1.6; opacity:0.6; max-width:380px; margin-top:18px; }
+.login-success h3{
+  font-family:'Fraunces',serif; font-weight:600; font-size:22px; margin:0 0 10px;
+}
+.login-success p{ font-size:14.5px; line-height:1.6; opacity:0.75; max-width:50ch; }
+.points-pill{
+  display:inline-block; margin-top:14px;
+  border:1px solid var(--moss); color:var(--moss-dark);
+  border-radius:20px; padding:6px 16px; font-size:13px; font-weight:500;
+}
+
+/* ---- reviews ---- */
+.reviews{
+  border-top:1px solid var(--line);
+  margin-top:56px;
+  padding-top:36px;
+}
+.reviews h3{
+  font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin:0 0 22px;
+}
+.review{ padding:18px 0; border-bottom:1px solid var(--line); }
+.review:last-child{ border-bottom:none; }
+.review .stars{
+  display:block; color:var(--moss); font-size:13px; letter-spacing:2px; margin-bottom:8px;
+}
+.review p{
+  font-family:'Fraunces',serif; font-style:italic; font-size:16px;
+  line-height:1.55; margin:0 0 10px; max-width:58ch;
+}
+.review span{ font-size:12.5px; opacity:0.55; }
+
+@media (max-width:520px){
+  .product, .bag-item{ grid-template-columns:1fr; gap:10px; }
+  .prod-art{ width:64px; height:64px; }
+  .brand-tag{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="brand">
+    <button class="brand-mark" id="brandBtn"><span>4</span>YOURSKIN</button>
+    <div class="brand-right">
+      <div class="brand-tag">din hudanalys · 5 frågor</div>
+      <button class="login-link" id="loginBtn">Logga in</button>
+      <button class="bag-btn" id="bagBtn" aria-label="Varukorg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5L6 8z"/>
+          <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+        </svg>
+        <span class="bag-count" id="bagCount">0</span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="main-nav">
+    <button class="nav-link" data-view="shop">Produkter</button>
+    <button class="nav-link" data-view="quiz">Quiz</button>
+    <button class="nav-link" data-view="about">Om oss</button>
+  </nav>
+
+  <!-- ===== HOME VIEW ===== -->
+  <div class="page-view active" id="view-home">
+    <div class="res-head">
+      <div class="res-eyebrow">recensioner</div>
+      <h2>Vad andra tycker om oss</h2>
+    </div>
+    <div class="review-marquee">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+    <div class="home-banner">
+      <p class="banner-lead">Find out what's</p>
+      <button class="banner-link" id="bannerQuizLink"><span>4</span>YOURSKIN</button>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ VIEW ===== -->
+  <div class="page-view" id="view-quiz">
+    <div class="progress" id="progress"></div>
+    <div id="quiz"></div>
+    <div id="results">
+      <div class="res-head">
+        <div class="res-eyebrow">din rutin</div>
+        <h2 id="resTitle">Här är dina produkter</h2>
+        <p id="resSub"></p>
+      </div>
+      <div class="routine" id="routine"></div>
+      <div class="res-actions">
+        <button class="btn btn-cta" id="addAllBtn">Lägg alla i varukorgen</button>
+        <button class="btn btn-restart" id="restartBtn">Gör om testet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SHOP VIEW ===== -->
+  <div class="page-view" id="view-shop">
+    <div class="res-head">
+      <div class="res-eyebrow">bläddra</div>
+      <h2>Alla produkter vi rekommenderar</h2>
+      <p>Samma produkter som ligger till grund för din hudanalys — bläddra fritt och lägg till det du vill testa.</p>
+    </div>
+    <div id="shopSections"></div>
+    <div class="reviews" id="reviews-shop"></div>
+  </div>
+
+  <!-- ===== ABOUT VIEW ===== -->
+  <div class="page-view" id="view-about">
+    <div class="res-head">
+      <div class="res-eyebrow">om oss</div>
+      <h2>Om 4YOURSKIN</h2>
+      <p>4YOURSKIN parar ihop dina favorit- och mest virala hudvårdsprodukter med det din hud faktiskt behöver. Vi tar bort gissningsleken — istället för att skrolla genom hundratals rekommendationer och recensioner får du en rutin byggd utifrån din hudtyp, dina bekymmer och dina mål.</p>
+      <p>Vi håller oss till produkter som redan bevisat sig, från kliniska favoriter som CeraVe och La Roche-Posay till de senaste K-beauty-namnen som sprids på TikTok. Vår hudanalys tar fem frågor och 30 sekunder — resten sköter vi.</p>
+    </div>
+    <div class="reviews" id="reviews-about"></div>
+  </div>
+
+  <!-- ===== LOGIN VIEW ===== -->
+  <div class="page-view" id="view-login">
+    <div class="res-head">
+      <div class="res-eyebrow">konto</div>
+      <h2>Logga in eller skapa konto</h2>
+      <p>Skapa ett konto för att spara din hudanalys och samla shoppingpoäng på varje köp.</p>
+    </div>
+    <div id="loginArea">
+      <form class="login-form" id="loginForm">
+        <label>Namn
+          <input type="text" required placeholder="Ditt namn">
+        </label>
+        <label>E-post
+          <input type="email" required placeholder="din@epost.se">
+        </label>
+        <label>Lösenord
+          <input type="password" required placeholder="••••••••">
+        </label>
+        <div class="res-actions" style="margin-top:6px;">
+          <button type="submit" class="btn btn-cta">Skapa konto</button>
+        </div>
+      </form>
+      <p class="points-note">Du samlar 1 poäng för varje 10 kr du handlar för. Poängen kan lösas in mot rabatt på framtida köp — perfekt när du kommer tillbaka för att fylla på din rutin.</p>
+    </div>
+    <div class="reviews" id="reviews-login"></div>
+  </div>
+
+  <!-- ===== BAG VIEW ===== -->
+  <div class="page-view" id="view-bag">
+    <div class="res-head">
+      <div class="res-eyebrow">din varukorg</div>
+      <h2>Varukorg</h2>
+      <p id="bagSub">Produkterna du har lagt till samlas här.</p>
+    </div>
+    <div id="bagContent"></div>
+    <div class="reviews" id="reviews-bag"></div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- Quiz definition ---------------- */
+const questions = [
+  {
+    key:'skinType',
+    multi:false,
+    q:'Hur skulle du beskriva din hud generellt?',
+    hint:'Välj det som stämmer bäst.',
+    options:[
+      {v:'torr', l:'Torr'},
+      {v:'fet', l:'Fet'},
+      {v:'kombinerad', l:'Kombinerad'},
+      {v:'normal', l:'Normal'}
+    ]
+  },
+  {
+    key:'concern',
+    multi:true,
+    max:2,
+    q:'Vilka hudbekymmer vill du främst åtgärda?',
+    hint:'Välj upp till två.',
+    options:[
+      {v:'akne', l:'Akne'},
+      {v:'pigment', l:'Pigment'},
+      {v:'fina linjer', l:'Fina linjer'},
+      {v:'ojämn hudton', l:'Ojämn hudton'},
+      {v:'torr', l:'Torrhet'}
+    ]
+  },
+  {
+    key:'fragranceFree',
+    multi:false,
+    q:'Föredrar du oparfymerade produkter?',
+    hint:'',
+    options:[
+      {v:true, l:'Ja'},
+      {v:false, l:'Nej'}
+    ]
+  },
+  {
+    key:'spf',
+    multi:false,
+    q:'Använder du solskydd dagligen?',
+    hint:'',
+    options:[
+      {v:true, l:'Ja'},
+      {v:false, l:'Nej'}
+    ]
+  },
+  {
+    key:'goal',
+    multi:false,
+    q:'Vad är ditt främsta mål just nu?',
+    hint:'',
+    options:[
+      {v:'klarare hy', l:'Klarare hy'},
+      {v:'fastare hud', l:'Fastare hud'},
+      {v:'lugnare hud', l:'Lugnare, mindre irriterad hud'}
+    ]
+  }
+];
+
+const answers = {};
+let current = 0;
+
+/* ---------------- Product catalogue ---------------- */
+const products = {
+  cleanser:[
+    {id:'c1', brand:'CeraVe', name:'Hydrating Facial Cleanser', for:['torr','normal'], ff:true,
+      desc:'Kräm med ceramider och hyaluronsyra som rengör utan att rubba hudbarriären.', price:'139 kr'},
+    {id:'c2', brand:'La Roche-Posay', name:'Toleriane Dermo-Cleanser', for:['torr','normal'], ff:true,
+      desc:'Mjuk rengöringsmjölk för känslig hud, tvättar av utan att kännas stram.', price:'179 kr'},
+    {id:'c3', brand:'CeraVe', name:'Foaming Facial Cleanser', for:['fet','kombinerad'], ff:true,
+      desc:'Skummande gel med ceramider och niacinamid för fet och kombinerad hud.', price:'139 kr'},
+    {id:'c4', brand:'COSRX', name:'Salicylic Acid Daily Gentle Cleanser', for:['fet','kombinerad'], ff:false,
+      desc:'K-beauty-favorit med mild salicylsyra som håller porer klara dagligen.', price:'179 kr'}
+  ],
+  serum:[
+    {id:'s1', brand:'La Roche-Posay', concern:'akne', ff:true, name:'Effaclar Serum Concentré Anti-Imperfections',
+      desc:'Riktar in sig på finnar och kvarvarande märken efter oren hud.', price:'329 kr'},
+    {id:'s2', brand:'COSRX', concern:'akne', ff:false, name:'BHA Blackhead Power Liquid',
+      desc:'K-beauty-klassiker med betain-salicylsyra som rensar porer på djupet.', price:'249 kr'},
+    {id:'s3', brand:'CeraVe', concern:'pigment', ff:true, name:'Skin Renewing Vitamin C Serum',
+      desc:'10% ren C-vitamin som bleknar pigmentfläckar och ger lyster.', price:'299 kr'},
+    {id:'s4', brand:'La Roche-Posay', concern:'pigment', ff:true, name:'Pigmentclar Serum',
+      desc:'Niacinamid och salicylsyra riktat mot pigmentfläckar och ärr.', price:'389 kr'},
+    {id:'s5', brand:'CeraVe', concern:'fina linjer', ff:true, name:'Resurfacing Retinol Serum',
+      desc:'Inkapslad retinol och niacinamid som mjukar upp fina linjer.', price:'279 kr'},
+    {id:'s6', brand:'Beauty of Joseon', concern:'ojämn hudton', ff:false, name:'Glow Serum: Propolis + Niacinamide',
+      desc:'K-beauty-favorit som jämnar ut hudtonen och ger en frisk lyster.', price:'229 kr'},
+    {id:'s7', brand:'La Roche-Posay', concern:'torr', ff:true, name:'Hyalu B5 Serum',
+      desc:'Ren hyaluronsyra och vitamin B5 för intensiv, långvarig fukt.', price:'419 kr'},
+    {id:'s8', brand:'Torriden', concern:'torr', ff:true, name:'DIVE-IN Low Molecule Hyaluronic Acid Serum',
+      desc:'K-beauty-serum med hyaluronsyra i olika molekylstorlekar för djup fukt.', price:'199 kr'}
+  ],
+  moisturizer:[
+    {id:'m1', brand:'CeraVe', for:['torr'], ff:true, name:'Moisturizing Cream',
+      desc:'Rik kräm med tre essentiella ceramider som återuppbygger en torr barriär.', price:'179 kr'},
+    {id:'m2', brand:'La Roche-Posay', for:['torr'], ff:true, name:'Toleriane Sensitive Riche',
+      desc:'Närande kräm med prebiotika för torr, reaktiv hud.', price:'259 kr'},
+    {id:'m3', brand:'CeraVe', for:['fet'], ff:true, name:'PM Facial Moisturizing Lotion',
+      desc:'Lätt, oljefri lotion med niacinamid som mattifierar över natten.', price:'169 kr'},
+    {id:'m4', brand:'Round Lab', for:['fet','kombinerad'], ff:false, name:'1025 Dokdo Cream',
+      desc:'K-beauty-kräm med havsvatten och alger, lätt och snabbt absorberad.', price:'249 kr'},
+    {id:'m5', brand:'CeraVe', for:['kombinerad','normal'], ff:true, name:'Facial Moisturizing Lotion AM',
+      desc:'Mellantät lotion med ceramider och hyaluronsyra för balanserad hud.', price:'169 kr'}
+  ],
+  spf:[
+    {id:'p1', brand:'La Roche-Posay', name:'Anthelios UVMune 400 Fluid SPF50+', ff:true,
+      desc:'Doftfri, mattifierande solskyddsfluid som fungerar bra under smink.', price:'249 kr'},
+    {id:'p2', brand:'Beauty of Joseon', name:'Relief Sun: Rice + Probiotics SPF50+ PA++++', ff:false,
+      desc:'K-beauty-solskydd med risvatten, lätt finish utan vitt skimmer.', price:'219 kr'}
+  ],
+  treatment:[
+    {id:'t1', brand:'La Roche-Posay', goal:'klarare hy', ff:true, name:'Effaclar Duo (+) Punktbehandling',
+      desc:'Niacinamid och salicylsyra mot både finnar och kvarvarande märken.', price:'259 kr'},
+    {id:'t2', brand:'COSRX', goal:'klarare hy', ff:false, name:'Acne Pimple Master Patch',
+      desc:'K-beauty-patcher som lugnar och skyddar enskilda finnar över natten.', price:'99 kr'},
+    {id:'t3', brand:'CeraVe', goal:'fastare hud', ff:true, name:'Skin Renewing Retinol Serum',
+      desc:'Retinol, neuropeptider och ceramider för fastare, jämnare hud.', price:'299 kr'},
+    {id:'t4', brand:'La Roche-Posay', goal:'lugnare hud', ff:true, name:'Cicaplast Baume B5',
+      desc:'Reparerande balsam som lugnar irriterad, känslig eller sprucken hud.', price:'179 kr'},
+    {id:'t5', brand:'Anua', goal:'lugnare hud', ff:true, name:'Heartleaf 77% Soothing Toner',
+      desc:'K-beauty-toner med hjärtbladsextrakt som lugnar rodnad och irritation.', price:'229 kr'}
+  ]
+};
+
+const categoryLabels = {
+  cleanser:'Rengöring', serum:'Serum', moisturizer:'Fuktkräm', spf:'Solskydd', treatment:'Riktade behandlingar'
+};
+
+function prodIcon(cat){
+  const icons = {
+    cleanser:'<rect x="7" y="9" width="10" height="12" rx="1"/><path d="M10 9V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2v3"/><path d="M9 4h6"/>',
+    serum:'<path d="M9 3h6v4l2 3v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10l2-3V3z"/><path d="M9 10h6"/>',
+    moisturizer:'<rect x="5" y="9" width="14" height="11" rx="2"/><rect x="6" y="5" width="12" height="4" rx="1"/>',
+    spf:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+    treatment:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>'
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${icons[cat]}</svg>`;
+}
+
+/* ---------------- Reviews ---------------- */
+const REVIEWS_DATA = [
+  {text:'Jag hade ingen aning om vad jag faktiskt behövde innan. Testet tog en minut och jag fick en rutin som kändes gjord för mig, inte bara ännu en topplista.', name:'Elin, 27'},
+  {text:'Gillar att varje produkt förklarar varför den föreslås. Kändes inte som gissningslek längre — jag visste exakt vad jag beställde och varför.', name:'Noah, 31'},
+  {text:'Superenkelt jämfört med att läsa recensioner i timmar. Lade hela rutinen i varukorgen direkt från resultatsidan och var klar på två minuter.', name:'Maja, 24'},
+  {text:'Jag har testat flera hudvårdsquiz men den här var den enda som faktiskt kändes rätt. Rutinen passade från dag ett.', name:'Sara, 29'},
+  {text:'Enkelt, snabbt och produkterna höll vad de lovade. Kommer handla här igen när rutinen behöver fyllas på.', name:'Oscar, 34'}
+];
+
+const REVIEWS_HTML = `
+  <h3>Vad kunderna säger</h3>
+  ${REVIEWS_DATA.map(r=>`
+    <div class="review">
+      <span class="stars">★★★★★</span>
+      <p>${r.text}</p>
+      <span>${r.name}</span>
+    </div>
+  `).join('')}
+`;
+['shop','about','login','bag'].forEach(id=>{
+  const el = document.getElementById('reviews-'+id);
+  if(el) el.innerHTML = REVIEWS_HTML;
+});
+
+/* Homepage marquee — reviews doubled so the loop is seamless */
+const marqueeCards = REVIEWS_DATA.concat(REVIEWS_DATA).map(r=>`
+  <div class="review-card">
+    <span class="stars">★★★★★</span>
+    <p>${r.text}</p>
+    <span class="name">${r.name}</span>
+  </div>
+`).join('');
+document.getElementById('marqueeTrack').innerHTML = marqueeCards;
+document.getElementById('bannerQuizLink').addEventListener('click', ()=>showView('quiz'));
+
+/* ---------------- View routing ---------------- */
+function showView(name){
+  document.querySelectorAll('.page-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(b=>{
+    b.classList.toggle('active', b.dataset.view === name);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(name==='bag') renderBagView();
+}
+document.getElementById('brandBtn').addEventListener('click', ()=>showView('home'));
+document.getElementById('loginBtn').addEventListener('click', ()=>showView('login'));
+document.getElementById('bagBtn').addEventListener('click', ()=>showView('bag'));
+document.querySelectorAll('.nav-link').forEach(btn=>{
+  btn.addEventListener('click', ()=>showView(btn.dataset.view));
+});
+
+/* ---------------- Bag ---------------- */
+let bag = []; // {cat, item, qty}
+const bagCountEl = document.getElementById('bagCount');
+
+function addItemToBag(cat, item){
+  const existing = bag.find(b=>b.item.id===item.id);
+  if(existing){ existing.qty++; } else { bag.push({cat, item, qty:1}); }
+  updateBagBadge();
+}
+function updateBagBadge(){
+  const count = bag.reduce((s,b)=>s+b.qty,0);
+  bagCountEl.textContent = count;
+  bagCountEl.classList.toggle('show', count > 0);
+  bagCountEl.classList.remove('bump');
+  void bagCountEl.offsetWidth;
+  bagCountEl.classList.add('bump');
+  if(document.getElementById('view-bag').classList.contains('active')) renderBagView();
+}
+function priceToNumber(p){ return parseInt(p.replace(/[^\d]/g,''),10) || 0; }
+
+function renderBagView(){
+  const wrap = document.getElementById('bagContent');
+  const sub = document.getElementById('bagSub');
+  if(bag.length===0){
+    sub.textContent = 'Din varukorg är tom.';
+    wrap.innerHTML = `<div class="bag-empty">Inga produkter tillagda än — gå till <strong>Produkter</strong> eller ta hudanalysen för att hitta din rutin.</div>`;
+    return;
+  }
+  sub.textContent = `${bag.reduce((s,b)=>s+b.qty,0)} produkter i din varukorg.`;
+  let total = 0;
+  wrap.innerHTML = `<div class="bag-list">` + bag.map((b,i)=>{
+    total += priceToNumber(b.item.price) * b.qty;
+    return `
+    <div class="bag-item">
+      <div class="prod-art">${prodIcon(b.cat)}</div>
+      <div>
+        <h3>${b.item.brand} <span class="prod-name">${b.item.name}</span></h3>
+        <p class="why">${b.item.desc}</p>
+        <div class="price">${b.item.price} · ${categoryLabels[b.cat]}</div>
+        <div class="qty">Antal: ${b.qty}</div>
+        <button class="bag-remove" data-idx="${i}">Ta bort</button>
+      </div>
+    </div>`;
+  }).join('') + `</div>
+  <div class="bag-total"><span>Totalt</span><span>${total} kr</span></div>`;
+
+  wrap.querySelectorAll('.bag-remove').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      bag.splice(Number(btn.dataset.idx), 1);
+      updateBagBadge();
+      renderBagView();
+    });
+  });
+}
+
+/* ---------------- Shop view ---------------- */
+function renderShop(){
+  const el = document.getElementById('shopSections');
+  el.innerHTML = Object.keys(products).map(cat=>`
+    <div class="shop-section">
+      <h3>${categoryLabels[cat]}</h3>
+      <div class="shop-list">
+        ${products[cat].map(item=>`
+          <div class="product shop-item">
+            <div class="prod-art">${prodIcon(cat)}</div>
+            <div>
+              <h3>${item.brand} <span class="prod-name">${item.name}</span></h3>
+              <div class="price">${item.price}</div>
+              <p class="why">${item.desc}</p>
+              <div class="tags">${item.ff ? '<span>Oparfymerad</span>' : ''}</div>
+              <button class="btn btn-add" data-cat="${cat}" data-id="${item.id}">Lägg i varukorgen</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.btn-add').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const cat = btn.dataset.cat;
+      const item = products[cat].find(p=>p.id===btn.dataset.id);
+      addItemToBag(cat, item);
+      btn.textContent = 'Tillagd ✓';
+      btn.classList.add('added');
+      setTimeout(()=>{
+        btn.textContent = 'Lägg i varukorgen';
+        btn.classList.remove('added');
+      }, 1800);
+    });
+  });
+}
+renderShop();
+
+/* ---------------- Login ---------------- */
+document.getElementById('loginForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = e.target.querySelector('input[type="text"]').value || 'du';
+  document.getElementById('loginArea').innerHTML = `
+    <div class="login-success">
+      <h3>Välkommen, ${name}!</h3>
+      <p>Ditt konto är skapat. Din hudanalys sparas automatiskt, och du samlar poäng varje gång du handlar.</p>
+      <div class="points-pill">0 poäng insamlade</div>
+    </div>
+  `;
+});
+
+/* ---------------- Render quiz ---------------- */
+const quizEl = document.getElementById('quiz');
+const progressEl = document.getElementById('progress');
+
+function buildProgress(){
+  progressEl.innerHTML = questions.map(()=>'<i><b></b></i>').join('');
+}
+
+function renderStep(){
+  const q = questions[current];
+  const sel = answers[q.key];
+
+  const optionsHtml = q.options.map((o,i)=>{
+    const isSel = q.multi
+      ? Array.isArray(sel) && sel.includes(o.v)
+      : sel === o.v;
+    return `<button class="opt ${isSel?'selected':''}" data-v="${o.v}">
+        <span class="num">${String(i+1).padStart(2,'0')}</span>
+        <span class="label">${o.l}</span>
+        <span class="mark"></span>
+      </button>`;
+  }).join('');
+
+  quizEl.innerHTML = `
+    <div class="step active">
+      <div class="step-no">Fråga ${current+1} av ${questions.length}</div>
+      <h2>${q.q}</h2>
+      ${q.hint ? `<div class="hint">${q.hint}</div>` : `<div class="hint" style="visibility:hidden">.</div>`}
+      <div class="options">${optionsHtml}</div>
+      ${q.multi ? `<div class="multihint">${(sel||[]).length}/${q.max} valda</div>` : ''}
+      <div class="nav-row">
+        <button class="btn btn-back" id="backBtn" ${current===0?'disabled':''}>← Föregående</button>
+        <button class="btn btn-next" id="nextBtn" ${canAdvance(q)?'':'disabled'}>${current===questions.length-1?'Se mina produkter':'Nästa'}</button>
+      </div>
+    </div>
+  `;
+
+  quizEl.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const q = questions[current];
+      let v = btn.dataset.v;
+      if(v==='true') v=true; if(v==='false') v=false;
+
+      if(q.multi){
+        let arr = answers[q.key] ? [...answers[q.key]] : [];
+        if(arr.includes(v)){
+          arr = arr.filter(x=>x!==v);
+        } else {
+          if(arr.length>=q.max) arr.shift();
+          arr.push(v);
+        }
+        answers[q.key] = arr;
+      } else {
+        answers[q.key] = v;
+      }
+      syncOptionUI(q);
+    });
+  });
+
+  document.getElementById('backBtn').addEventListener('click', ()=>{
+    if(current>0){ current--; renderStep(); updateProgress(); }
+  });
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
+    if(!canAdvance(q)) return;
+    if(current<questions.length-1){
+      current++; renderStep(); updateProgress();
+    } else {
+      showResults();
+    }
+  });
+
+  updateProgress();
+}
+
+/* Updates selection state without rebuilding the step markup, so nothing re-animates or jumps */
+function syncOptionUI(q){
+  const sel = answers[q.key];
+  quizEl.querySelectorAll('.opt').forEach(btn=>{
+    let v = btn.dataset.v;
+    if(v==='true') v=true; if(v==='false') v=false;
+    const isSel = q.multi ? (Array.isArray(sel) && sel.includes(v)) : sel === v;
+    btn.classList.toggle('selected', isSel);
+  });
+  const multihint = quizEl.querySelector('.multihint');
+  if(multihint) multihint.textContent = `${(sel||[]).length}/${q.max} valda`;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = !canAdvance(q);
+}
+
+function canAdvance(q){
+  const sel = answers[q.key];
+  if(q.multi) return Array.isArray(sel) && sel.length>0;
+  return sel !== undefined;
+}
+
+function updateProgress(){
+  progressEl.querySelectorAll('i b').forEach((b,i)=>{
+    b.style.width = i<current ? '100%' : (i===current ? '50%' : '0%');
+  });
+}
+
+/* ---------------- Recommendation engine ---------------- */
+function pick(list, opts){
+  let pool = list;
+  if(opts.skin) pool = pool.filter(p=> !p.for || p.for.includes(opts.skin));
+  if(opts.concern) pool = pool.filter(p=> !p.concern || p.concern===opts.concern);
+  if(opts.goal) pool = pool.filter(p=> !p.goal || p.goal===opts.goal);
+  if(pool.length===0) pool = list;
+  const ffMatch = pool.filter(p=> p.ff === opts.ff);
+  const finalPool = ffMatch.length ? ffMatch : pool;
+  return finalPool[0];
+}
+
+let lastRoutine = [];
+function buildRoutine(){
+  const skin = answers.skinType;
+  const concerns = answers.concern || [];
+  const primaryConcern = concerns[0];
+  const ff = answers.fragranceFree;
+  const goal = answers.goal;
+
+  const cleanser = pick(products.cleanser, {skin, ff});
+  const serum = pick(products.serum, {concern:primaryConcern, ff});
+  const moisturizer = pick(products.moisturizer, {skin, ff});
+  const spfProduct = pick(products.spf, {ff});
+  const treatment = pick(products.treatment, {goal, ff});
+
+  return [
+    {cat:'cleanser', label:'Morgon & kväll · Rengöring', item:cleanser, why:`Vald för din ${skin} hud${ff?', i oparfymerad version':''}.`},
+    {cat:'serum', label:'Morgon & kväll · Serum', item:serum, why:`Riktar in sig på ${primaryConcern || 'din hud'}.`},
+    {cat:'moisturizer', label:'Morgon & kväll · Fuktkräm', item:moisturizer, why:`Matchar din ${skin} hudtyp.`},
+    {cat:'spf', label:'Morgon · Solskydd', item:spfProduct, why: answers.spf ? 'Du använder redan solskydd dagligen — bra vana, här är en variant som matchar dina preferenser.' : 'Du angav att du inte använder solskydd dagligen — det här är det enskilt mest effektiva steget mot fina linjer och pigment.'},
+    {cat:'treatment', label:'2–3×/vecka · Riktad behandling', item:treatment, why:`Stödjer ditt mål: ${goal}.`}
+  ];
+}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  progressEl.style.display='none';
+  const results = document.getElementById('results');
+  results.classList.add('active');
+
+  const skinLabel = {torr:'torr',fet:'fet',kombinerad:'kombinerad',normal:'normal'}[answers.skinType];
+  document.getElementById('resSub').textContent =
+    `Baserat på din ${skinLabel} hud, dina hudbekymmer och ditt mål (${answers.goal}) har vi satt ihop en rutin i fem steg.`;
+
+  lastRoutine = buildRoutine();
+  document.getElementById('routine').innerHTML = lastRoutine.map((r,i)=>`
+    <div class="product">
+      <div class="prod-art">${prodIcon(r.cat)}</div>
+      <div>
+        <div class="step-label">${r.label}</div>
+        <h3>${r.item.brand} <span class="prod-name">${r.item.name}</span></h3>
+        <p class="why">${r.item.desc}</p>
+        <div class="tags"><span>${r.item.brand}</span><span>${r.why}</span></div>
+        <div class="product-foot">
+          <div class="price">${r.item.price}</div>
+          <button class="btn btn-add" data-idx="${i}">Lägg i varukorgen</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('#routine .btn-add').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const r = lastRoutine[Number(btn.dataset.idx)];
+      addItemToBag(r.cat, r.item);
+      btn.textContent = 'Tillagd ✓';
+      btn.classList.add('added');
+      setTimeout(()=>{
+        btn.textContent = 'Lägg i varukorgen';
+        btn.classList.remove('added');
+      }, 1800);
+    });
+  });
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  current = 0;
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('quiz').style.display='block';
+  progressEl.style.display='flex';
+  buildProgress();
+  renderStep();
+});
+
+document.getElementById('addAllBtn').addEventListener('click', (e)=>{
+  const btn = e.target;
+  const original = btn.textContent;
+  lastRoutine.forEach(r=> addItemToBag(r.cat, r.item));
+  btn.textContent = 'Tillagt ✓';
+  setTimeout(()=>{ btn.textContent = original; }, 1800);
+});
+
+/* ---------------- init ---------------- */
+buildProgress();
+renderStep();
+</script>
+
+</body>
+</html>
